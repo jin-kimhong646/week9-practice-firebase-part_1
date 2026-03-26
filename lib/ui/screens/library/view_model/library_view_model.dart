@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:w9_part1/data/repositories/artists/artist_repository.dart';
 import '../../../../data/repositories/songs/song_repository.dart';
+import '../../../../model/artists/artist.dart';
 import '../../../states/player_state.dart';
 import '../../../../model/songs/song.dart';
 import '../../../utils/async_value.dart';
+import 'library_item_data.dart';
 
 class LibraryViewModel extends ChangeNotifier {
   final SongRepository songRepository;
   final PlayerState playerState;
+  final ArtistRepository artistRepository;
 
-  AsyncValue<List<Song>> songsValue = AsyncValue.loading();
+  AsyncValue<List<LibraryItemData>> songsData = AsyncValue.loading();
 
-  LibraryViewModel({required this.songRepository, required this.playerState}) {
+  LibraryViewModel({
+    required this.songRepository,
+    required this.playerState,
+    required this.artistRepository,
+  }) {
     playerState.addListener(notifyListeners);
 
     // init
@@ -29,19 +37,36 @@ class LibraryViewModel extends ChangeNotifier {
 
   void fetchSong() async {
     // 1- Loading state
-    songsValue = AsyncValue.loading();
+    songsData = AsyncValue.loading();
     notifyListeners();
 
     try {
-      // 2- Fetch is successfull
+      // 1- Fetch songs
       List<Song> songs = await songRepository.fetchSongs();
-      songsValue = AsyncValue.success(songs);
-    } catch (e) {
-      // 3- Fetch is unsucessfull
-      songsValue = AsyncValue.error(e);
-    }
-     notifyListeners();
 
+      // 2- Fethc artist
+      List<Artist> artists = await artistRepository.fetchArtists();
+
+      // 3- Create the mapping artistid-> artist
+      Map<String, Artist> mapArtist = {};
+      for (Artist artist in artists) {
+        mapArtist[artist.id] = artist;
+      }
+
+      List<LibraryItemData> data = songs
+          .map(
+            (song) =>
+                LibraryItemData(song: song, artist: mapArtist[song.artistId]!),
+          )
+          .toList();
+
+      this.songsData = AsyncValue.success(data);
+    } catch (e) {
+      
+      // 3- Fetch is unsucessfull
+      songsData = AsyncValue.error(e);
+    }
+    notifyListeners();
   }
 
   bool isSongPlaying(Song song) => playerState.currentSong == song;
