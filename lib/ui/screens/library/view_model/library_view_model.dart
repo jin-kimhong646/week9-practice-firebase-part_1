@@ -60,11 +60,20 @@ class LibraryViewModel extends ChangeNotifier {
           )
           .toList();
 
-      this.songsData = AsyncValue.success(data);
+      songsData = AsyncValue.success(data);
     } catch (e) {
-      
       // 3- Fetch is unsucessfull
       songsData = AsyncValue.error(e);
+    }
+    notifyListeners();
+  }
+
+  Future<void> likeIncreasement(String songId, int currentLikeCount) async {
+    try {
+      await songRepository.likeIncreasement(songId, currentLikeCount); 
+      fetchSong();
+    } catch (e) {
+      throw Exception("can not increase the like");
     }
     notifyListeners();
   }

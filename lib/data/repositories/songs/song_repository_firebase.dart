@@ -30,4 +30,21 @@ class SongRepositoryFirebase extends SongRepository {
 
   @override
   Future<Song?> fetchSongById(String id) async {}
+
+  @override
+  Future<void> likeIncreasement(String songId, int currentLikeCount) async {
+    final Uri likeSongsUri = Uri.https(
+      'g2-love-ronan-default-rtdb.asia-southeast1.firebasedatabase.app',
+      '/songs/$songId.json',
+    );
+
+    final http.Response response = await http.patch(
+      likeSongsUri,
+      body: json.encode({'likeCount': currentLikeCount + 1}),
+    );
+
+    if (response.statusCode != 200){
+      throw Exception("sorry all bro and sis you can not like this song ");
+    }
+  }
 }

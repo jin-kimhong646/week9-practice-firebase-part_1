@@ -39,6 +39,12 @@ class LibraryContent extends StatelessWidget {
             },
             libraryItemData: songs[index],
             isPlaying: mv.isSongPlaying(songs[index].song),
+            onLike: () {
+              mv.likeIncreasement(
+                songs[index].song.id,
+                songs[index].song.likeCount,
+              );
+            },
           ),
         );
     }
