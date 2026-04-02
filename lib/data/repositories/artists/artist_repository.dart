@@ -4,4 +4,6 @@ abstract class ArtistRepository {
   Future<List<Artist>> fetchArtists();
 
   Future<Artist?> fetchAristsById(String id);
+
+  Future<List<Artist>> getArtists();
 }

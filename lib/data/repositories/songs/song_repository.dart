@@ -6,4 +6,6 @@ abstract class SongRepository {
   Future<Song?> fetchSongById(String id);
 
   Future<void> likeIncreasement(String songId ,int currentLikeCount );
+
+  Future<List<Song>> getSongs();
 }

@@ -10,6 +10,8 @@ class ArtistRepositoryFirebase extends ArtistRepository {
     '/artists.json',
   );
 
+  List<Artist>? _cachedArtist;
+
   @override
   Future<List<Artist>> fetchArtists() async {
     final http.Response response = await http.get(artistUri);
@@ -27,5 +29,17 @@ class ArtistRepositoryFirebase extends ArtistRepository {
   @override
   Future<Artist?> fetchAristsById(String id) async {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Artist>> getArtists() async {
+    if (_cachedArtist != null) {
+      return _cachedArtist!;
+    }
+
+    List<Artist> artists = await fetchArtists();
+    _cachedArtist = artists;
+    print("fetch artist from DB");
+    return artists;
   }
 }

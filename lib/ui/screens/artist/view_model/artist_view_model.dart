@@ -34,7 +34,7 @@ class ArtistViewModel extends ChangeNotifier {
 
     try {
       // 2- Fetch is successfull
-      List<Artist> artists = await artistRepository.fetchArtists();
+      List<Artist> artists = await artistRepository.getArtists();
       artistValue = AsyncValue.success(artists);
     } catch (e) {
       // 3- Fetch is unsucessfull
